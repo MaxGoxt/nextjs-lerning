@@ -1,3 +1,5 @@
+import { fetchCardData } from '@/app/lib/data';
+
 import {
   BanknotesIcon,
   ClockIcon,
@@ -5,6 +7,8 @@ import {
   InboxIcon,
 } from '@heroicons/react/24/outline';
 import { lusitana } from '@/app/ui/fonts';
+import { Suspense } from 'react';
+import { CardSkeleton } from '../skeletons';
 
 const iconMap = {
   collected: BanknotesIcon,
@@ -13,19 +17,25 @@ const iconMap = {
   invoices: InboxIcon,
 };
 
-export default async function CardWrapper() {
+export async function CardWrapper() {
+
+  const CardData = await fetchCardData();
+
   return (
     <>
       {/* NOTE: comment in this code when you get to this point in the course */}
-
-      {/* <Card title="Collected" value={totalPaidInvoices} type="collected" />
-      <Card title="Pending" value={totalPendingInvoices} type="pending" />
-      <Card title="Total Invoices" value={numberOfInvoices} type="invoices" />
-      <Card
-        title="Total Customers"
-        value={numberOfCustomers}
-        type="customers"
-      /> */}
+      <Suspense fallback={<CardSkeleton/>}>
+        <Card title="Collected" value={CardData.totalPaidInvoices} type="collected" />
+      </Suspense>
+      <Suspense fallback={<CardSkeleton/>}>
+        <Card title="Pending" value={CardData.totalPendingInvoices} type="pending" />
+      </Suspense>
+      <Suspense fallback={<CardSkeleton/>}>
+        <Card title="Total Invoices" value={CardData.numberOfInvoices} type="invoices" />
+      </Suspense>
+      <Suspense fallback={<CardSkeleton/>}>
+        <Card title="Total Customers" value={CardData.numberOfCustomers} type="customers" />
+      </Suspense>
     </>
   );
 }
